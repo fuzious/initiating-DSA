@@ -1,5 +1,4 @@
 //BY FUZIOUS
-
 import java.util.*;
 import java.io.*;
 class AVL {
@@ -34,7 +33,7 @@ class AVL {
         } while (ch != 0);
     }
 
-    public Node delete(Node root, int key) {
+    public static Node delete(Node root, int key) {
         Node parent = null;
         Node curr = root;
         while (curr != null && curr.key != key) {
@@ -56,12 +55,39 @@ class AVL {
                 } else {
                     parent.right = null;
                 }
-            } else {
+            }
+            else {
                 root = null;
             }
         }
 
+        else if (curr.left != null && curr.right != null) {
+            Node son = minimum(curr.right);
+            int val = son.key;
+            delete(root, son.key);
+            curr.key = val;
+        }
+        else {
+            Node child = (curr.left != null) ? curr.left : curr.right;
+            if (curr != root) {
+                if (curr == parent.left) {
+                    parent.left = child;
+                } else {
+                    parent.right = child;
+                }
+            }
+            else {
+                root = child;
+            }
+        }
+
         return root;
+    }
+    public static Node minimum(Node curr) {
+        while (curr.left != null) {
+            curr = curr.left;
+        }
+        return curr;
     }
     public static boolean contains(Node root, int val) {
         if (search(root, val) != null)
@@ -93,7 +119,7 @@ class AVL {
         if(bal>1&&val<root.left.key){
             return rightRotate(root);
         }
-        if(bal<-1&&val>root.left.key){
+        if(bal<-1&&val>root.right.key){
             return leftRotate(root);
         }
         if(bal>1&&val>root.left.key){
@@ -125,13 +151,13 @@ class AVL {
         out.flush();
         printInorder(node.right);
     }
-    public static Node leftRotate(Node X){
-        Node y=X.right;
-        Node tmp=y.left;
-        y.left=X;
-        X.right=tmp;
-        X.ht=Math.max(height(X.left),height(X.right));
-        y.ht=Math.max(height(y.left),height(y.right));
+    public static Node leftRotate(Node x) {
+        Node y = x.right;
+        Node T2 = y.left;
+        y.left = x;
+        x.right = T2;
+        x.ht = Math.max(height(x.left), height(x.right)) + 1;
+        y.ht = Math.max(height(y.left), height(y.right)) + 1;
         return y;
     }
     public static Node rightRotate(Node y) {
@@ -155,7 +181,6 @@ class AVL {
         }
     }
     static class InputReader {
-
         private final InputStream stream;
         private final byte[] buf = new byte[8192];
         private int curChar, snumChars;
